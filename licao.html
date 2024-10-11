@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Registros</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .hidden { display: none; }
+        .menu { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>Gerenciador de Registros</h1>
+
+<div class="menu">
+    <button onclick="showSection('agenda')">Agenda</button>
+    <button onclick="showSection('notas')">Notas dos Alunos</button>
+    <button onclick="showSection('altura')">Altura das Pessoas</button>
+    <button onclick="showSection('funcionarios')">Funcionários</button>
+    <button onclick="exit()">Sair</button>
+</div>
+
+<div id="agenda" class="hidden">
+    <h2>Agenda</h2>
+    <input type="text" id="contatoNome" placeholder="Nome">
+    <input type="text" id="contatoEndereco" placeholder="Endereço">
+    <input type="text" id="contatoTelefone" placeholder="Telefone">
+    <button onclick="addContato()">Cadastrar Contato</button>
+    <ul id="listaContatos"></ul>
+</div>
+
+<div id="notas" class="hidden">
+    <h2>Notas dos Alunos</h2>
+    <input type="text" id="alunoNome" placeholder="Nome do Aluno">
+    <input type="text" id="notasInput" placeholder="Notas (separadas por vírgula)">
+    <button onclick="addAluno()">Cadastrar Aluno</button>
+    <ul id="listaAlunos"></ul>
+</div>
+
+<div id="altura" class="hidden">
+    <h2>Altura das Pessoas</h2>
+    <input type="text" id="pessoaNome" placeholder="Nome">
+    <input type="number" id="pessoaAltura" placeholder="Altura (m)">
+    <button onclick="addPessoa()">Cadastrar Pessoa</button>
+    <ul id="listaPessoas"></ul>
+</div>
+
+<div id="funcionarios" class="hidden">
+    <h2>Funcionários</h2>
+    <input type="text" id="funcionarioMatricula" placeholder="Matrícula">
+    <input type="text" id="funcionarioNome" placeholder="Nome">
+    <input type="number" id="funcionarioSalario" placeholder="Salário">
+    <button onclick="addFuncionario()">Cadastrar Funcionário</button>
+    <ul id="listaFuncionarios"></ul>
+</div>
+
+<script>
+    const contatos = [];
+    const alunos = [];
+    const pessoas = [];
+    const funcionarios = [];
+
+    function showSection(section) {
+        document.querySelectorAll('.hidden').forEach(div => div.classList.add('hidden'));
+        document.getElementById(section).classList.remove('hidden');
+    }
+
+    function addContato() {
+        const nome = document.getElementById('contatoNome').value;
+        const endereco = document.getElementById('contatoEndereco').value;
+        const telefone = document.getElementById('contatoTelefone').value;
+
+        contatos.push({ nome, endereco, telefone });
+        displayContatos();
+        clearFields('contatoNome', 'contatoEndereco', 'contatoTelefone');
+    }
+
+    function displayContatos() {
+        const lista = document.getElementById('listaContatos');
+        lista.innerHTML = '';
+        contatos.forEach((c, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${c.nome} - ${c.endereco} - ${c.telefone}`;
+            lista.appendChild(li);
+        });
+    }
+
+    function addAluno() {
+        const nome = document.getElementById('alunoNome').value;
+        const notas = document.getElementById('notasInput').value.split(',').map(Number);
+
+        alunos.push({ nome, notas, media: calcularMedia(notas) });
+        displayAlunos();
+        clearFields('alunoNome', 'notasInput');
+    }
+
+    function calcularMedia(notas) {
+        return notas.reduce((a, b) => a + b, 0) / notas.length;
+    }
+
+    function displayAlunos() {
+        const lista = document.getElementById('listaAlunos');
+        lista.innerHTML = '';
+        alunos.forEach((a) => {
+            const status = a.media >= 5 ? "Aprovado" : "Reprovado";
+            const li = document.createElement('li');
+            li.textContent = `${a.nome} - Média: ${a.media.toFixed(2)} - Status: ${status}`;
+            lista.appendChild(li);
+        });
+    }
+
+    function addPessoa() {
+        const nome = document.getElementById('pessoaNome').value;
+        const altura = parseFloat(document.getElementById('pessoaAltura').value);
+
+        pessoas.push({ nome, altura });
+        displayPessoas();
+        clearFields('pessoaNome', 'pessoaAltura');
+    }
+
+    function displayPessoas() {
+        const lista = document.getElementById('listaPessoas');
+        lista.innerHTML = '';
+        pessoas.forEach((p) => {
+            const li = document.createElement('li');
+            li.textContent = `${p.nome} - Altura: ${p.altura.toFixed(2)} m`;
+            lista.appendChild(li);
+        });
+    }
+
+    function addFuncionario() {
+        const matricula = document.getElementById('funcionarioMatricula').value;
+        const nome = document.getElementById('funcionarioNome').value;
+        const salario = parseFloat(document.getElementById('funcionarioSalario').value);
+
+        funcionarios.push({ matricula, nome, salario });
+        displayFuncionarios();
+        clearFields('funcionarioMatricula', 'funcionarioNome', 'funcionarioSalario');
+    }
+
+    function displayFuncionarios() {
+        const lista = document.getElementById('listaFuncionarios');
+        lista.innerHTML = '';
+        funcionarios.forEach((f) => {
+            const li = document.createElement('li');
+            li.textContent = `Matrícula: ${f.matricula} - Nome: ${f.nome} - Salário: R$ ${f.salario.toFixed(2)}`;
+            lista.appendChild(li);
+        });
+    }
+
+    function clearFields(...fields) {
+        fields.forEach(field => document.getElementById(field).value = '');
+    }
+
+    function exit() {
+        if (confirm("Tem certeza que deseja sair?")) {
+            window.close();
+        }
+    }
+</script>
+
+</body>
+</html>
